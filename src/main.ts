@@ -10,6 +10,7 @@ async function bootstrap() {
 bootstrap();
 
 
+
 // Some commands to keep in mind:
 // 1. npx prisma migrate dev -> it will generate tables based on the given schema and push it to the Db
 // 2. npx prisma generate -> it will generate all the types from the given schema
