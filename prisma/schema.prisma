@@ -19,10 +19,12 @@ model Users{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email String
+  email String @unique
   hash String
   firstName String?
   lastName String?
+
+  bookmarks Bookmarks[]
 }
 
 model Bookmarks{
@@ -33,4 +35,7 @@ model Bookmarks{
   title String
   description String?
   link String
+
+  userId Int
+  user Users @relation(fields:[userId], references:[id])
 }
