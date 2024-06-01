@@ -2,14 +2,22 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true //removes properties from the request body that are not mentioned in the DTO
-  })); //telling NestJS to use the validation pipe globally
-  await app.listen(3000);
-  console.log("Listening on port 3000");
+  try{
+    const app = await NestFactory.create(AppModule);
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true //removes properties from the request body that are not mentioned in the DTO
+    })); //telling NestJS to use the validation pipe globally
+    await app.listen(3000);
+    console.log("Listening on port 3000");
+  }catch(err){
+    console.log('Error : ',err);
+    if(err instanceof PrismaClientInitializationError){
+      console.log(err.message);
+    }
+  }
 }
 bootstrap();
 

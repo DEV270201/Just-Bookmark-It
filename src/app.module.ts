@@ -4,9 +4,11 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { ConfigModule } from '@nestjs/config';
 
+// configModule is always attached to the root of the application 
 @Module({
-  imports: [AuthModule, PrismaModule, UserModule, BookmarkModule],
+  imports: [AuthModule, PrismaModule, UserModule, BookmarkModule, ConfigModule.forRoot({ isGlobal: true })],
   controllers: [],
   providers: [],
 })
