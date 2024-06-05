@@ -1,8 +1,8 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Request } from 'express';
 import { JWTGuard } from 'src/auth/guards';
-import { LoginInfo } from 'interfaces';
+import { GetUser } from './../auth/decorators';
+import { profileUpdateDTO } from './dtos/user.dto';
 
 
 @Controller('users')
@@ -12,8 +12,12 @@ export class UserController {
     constructor(private userService :UserService){}
     
     @Get("profile")
-    getUserProfile(@Req() req:Request){
-        let user = req.user as LoginInfo;
-        return this.userService.getUserProfile(user.id);
+    getUserProfile(@GetUser() userId: number){
+        return this.userService.getUserProfile(userId);
+    }
+
+    @Patch("edit")
+    updateProfile(@GetUser() userId: number, @Body() data: profileUpdateDTO){
+       return this.userService.updateUserProfile(userId,data);
     }
 }

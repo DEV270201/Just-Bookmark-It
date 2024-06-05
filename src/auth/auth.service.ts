@@ -34,7 +34,10 @@ export class AuthService{
             });
             
             //return created user
-            return user;
+            return {
+                success: true,
+                ...user
+            };
 
         }catch(err){
               
@@ -75,7 +78,7 @@ export class AuthService{
         }
     }
 
-    async signInToken(userId:number) : Promise<{access_token: string}> {
+    async signInToken(userId:number) : Promise<{success: boolean, access_token: string}> {
         const payload = {
             id: userId
         }
@@ -86,6 +89,7 @@ export class AuthService{
         })
 
         return {
+            success: true,
             access_token: token
         }
     }
