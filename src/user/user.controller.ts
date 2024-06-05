@@ -1,18 +1,19 @@
-/* eslint-disable prettier/prettier */
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { JWTGuard } from 'src/auth/guards';
+import { LoginInfo } from 'interfaces';
+
 
 @Controller('users')
+@UseGuards(JWTGuard)
 export class UserController {
 
     constructor(private userService :UserService){}
     
     @Get("profile")
-    @UseGuards(AuthGuard('jwt'))
     getUserProfile(@Req() req:Request){
-        console.log("user : ",req.user);
-        return this.userService.getUserProfile();
+        let user = req.user as LoginInfo;
+        return this.userService.getUserProfile(user.id);
     }
 }
