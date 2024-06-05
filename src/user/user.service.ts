@@ -18,7 +18,10 @@ export class UserService {
       if (!user) throw new BadRequestException('No such user exists...');
 
       let { hash, ...rest } = user;
-      return rest;
+      return {
+        success: true,
+        ...rest
+      };
     } catch (err) {
       console.error('Error : ', err);
       throw err;
@@ -37,7 +40,10 @@ export class UserService {
       if (!user) throw new BadRequestException('No such user exists...');
 
       let { hash, ...rest } = user;
-      return rest;
+      return {
+        success: true,
+        ...rest
+      };
     } catch (err) {
       console.error('Error : ', err);
       throw err;
