@@ -28,8 +28,9 @@ export class UserService {
     }
   }
 
-  async updateUserProfile(id: number, data: profileUpdateDTO) {
+  async updateUserProfile(id: number, data: profileUpdateDTO, file?: Express.Multer.File) {
     try {
+      console.log("file : ",file?.originalname);
       const user: Users = await this.prisma.users.update({
         where: {
           id,
