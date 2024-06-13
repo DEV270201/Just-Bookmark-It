@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileUpdateDTO } from './dtos/user.dto';
@@ -15,7 +15,11 @@ export class UserService {
         },
       });
 
-      if (!user) throw new BadRequestException('No such user exists...');
+      if (!user) 
+        throw new HttpException({
+          success: false,
+          message: 'No such user exists' 
+        },HttpStatus.BAD_REQUEST);
 
       let { hash, ...rest } = user;
       return {
@@ -38,7 +42,11 @@ export class UserService {
         data,
       });
 
-      if (!user) throw new BadRequestException('No such user exists...');
+      if (!user) 
+          throw new HttpException({
+              success: false,
+              message: 'No such user exists' 
+            },HttpStatus.BAD_REQUEST);
 
       let { hash, ...rest } = user;
       return {

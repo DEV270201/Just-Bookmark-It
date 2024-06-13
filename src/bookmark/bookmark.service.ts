@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookmarkDTO, EditBookmarkDTO } from './dtos';
-import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class BookmarkService {
@@ -62,7 +61,10 @@ export class BookmarkService {
           });
 
           if(!bookmark)
-             throw new BadRequestException('No such bookmark present in your account...');
+             throw new HttpException({
+              success: false,
+              message: 'No such bookmark present in your account...' 
+            },HttpStatus.BAD_REQUEST);
 
           const updatedBookmark = await this.prisma.bookmarks.update({
             where: {
@@ -95,7 +97,10 @@ export class BookmarkService {
             });
   
             if(!bookmark)
-               throw new BadRequestException('No such bookmark present in your account...');
+              throw new HttpException({
+               success: false,
+               message: 'No such bookmark present in your account...' 
+             },HttpStatus.BAD_REQUEST);
   
             await this.prisma.bookmarks.delete({
               where: {

@@ -1,13 +1,23 @@
 /* eslint-disable prettier/prettier */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
 import { PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 async function bootstrap() {
   try{
     const app = await NestFactory.create(AppModule);
     app.useGlobalPipes(new ValidationPipe({
+      exceptionFactory: (errors)=> {
+         console.log('Errors : ',errors);
+         const result = errors.map((error)=>{
+           return error.constraints[Object.keys(error.constraints)[0]]
+         })
+         return new HttpException({
+          success: false,
+          message: result
+         },HttpStatus.BAD_REQUEST);
+      },
       whitelist: true //removes properties from the request body that are not mentioned in the DTO
     })); //telling NestJS to use the validation pipe globally
     await app.listen(3000);

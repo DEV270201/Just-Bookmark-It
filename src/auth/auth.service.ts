@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { SignInDTO, SignUpDTO } from "./dtos/auth.dto";
 import * as argon from 'argon2';
@@ -43,7 +43,9 @@ export class AuthService{
               
            if(err instanceof PrismaClientKnownRequestError){
               if(err.code === 'P2002'){
-                 throw new BadRequestException(`${err.meta.target[0]} already exists!`);
+                 throw new HttpException({
+                    success: false,
+                    message: `${err.meta.target[0]} already exists!`},HttpStatus.BAD_REQUEST);
               }
            }
 
@@ -63,13 +65,17 @@ export class AuthService{
 
        //throw error if user does not exists
        if(!user)
-        throw new BadRequestException('incorrect email id...');
+        throw new HttpException({
+            success: false,
+            message: `Incorrect email id`},HttpStatus.BAD_REQUEST);
 
        //compare password
        const passwordMatch = await argon.verify(user.hash, body.password);
 
        if(!passwordMatch)
-        throw new BadRequestException('incorrect password...');
+        throw new HttpException({
+            success: false,
+            message: `Incorrect password`},HttpStatus.BAD_REQUEST);
        
        return this.signInToken(user.id);
 

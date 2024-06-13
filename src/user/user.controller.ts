@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Patch, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Patch, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JWTGuard } from 'src/auth/guards';
 import { GetUser } from './../auth/decorators';
@@ -22,7 +22,10 @@ export class UserController {
     @UseInterceptors(FileInterceptor('profile_pic', {
         fileFilter: (req,file,cb)=> {
             if (!file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
-                cb(new BadRequestException('Invalid file format...'),false);
+                cb(new HttpException({
+                     success: false,
+                     message: 'Invalid file format' 
+                   },HttpStatus.BAD_REQUEST),false);
             cb(null,true);
             },
         storage: storageInfo
