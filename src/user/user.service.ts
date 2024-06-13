@@ -50,4 +50,34 @@ export class UserService {
       throw err;
     }
   }
+
+  async deleteProfile(userId:number) {
+       try{
+        //1. delete all the bookmarks saved by the user
+        //2. delete the profile picture from the s3 bucket
+        //3. delete the user itself
+
+        const deleteBookmarks = this.prisma.bookmarks.deleteMany({
+          where: {
+            userId
+          }
+        });
+
+        const deleteUser = this.prisma.users.delete({
+          where: {
+            id: userId
+          }
+        });
+
+        await this.prisma.$transaction([deleteBookmarks,deleteUser]);
+
+        return {
+          success: true
+        };
+
+       }catch(err){
+         console.log("Err : ",err);
+         throw err;
+       }
+  }
 }

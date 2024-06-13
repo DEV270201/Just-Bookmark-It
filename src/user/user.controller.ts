@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Patch, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Patch, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JWTGuard } from 'src/auth/guards';
 import { GetUser } from './../auth/decorators';
@@ -18,7 +18,7 @@ export class UserController {
         return this.userService.getUserProfile(userId);
     }
 
-    @Patch("edit")
+    @Patch("profile/edit")
     @UseInterceptors(FileInterceptor('profile_pic', {
         fileFilter: (req,file,cb)=> {
             if (!file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
@@ -30,4 +30,10 @@ export class UserController {
     updateProfile(@UploadedFile() file: Express.Multer.File|undefined, @GetUser() userId: number, @Body() data: profileUpdateDTO){
        return this.userService.updateUserProfile(userId,data,file);
     }
+    
+    @Delete('profile/delete')
+    deleteProfile(@GetUser() userId: number){
+        return this.userService.deleteProfile(userId);
+    }
 }
+
