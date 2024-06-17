@@ -18,21 +18,31 @@ export class UserController {
         return this.userService.getUserProfile(userId);
     }
 
-    @Patch("profile/edit")
+    @Patch("edit_info")
+    updateUserProfile(@GetUser() userId: number, @Body() data: profileUpdateDTO){
+       return this.userService.updateUserProfile(userId,data);
+    }
+
+    @Patch("edit_pic")
     @UseInterceptors(FileInterceptor('profile_pic', {
         fileFilter: (req,file,cb)=> {
-            if (!file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+            if (!file.originalname.match(/^.*\.(png)$/))
                 cb(new HttpException({
                      success: false,
-                     message: 'Invalid file format' 
+                     message: 'File should be in PNG format' 
                    },HttpStatus.BAD_REQUEST),false);
             cb(null,true);
             },
-        storage: storageInfo
+        // storage: storageInfo
     }))
-    updateProfile(@UploadedFile() file: Express.Multer.File|undefined, @GetUser() userId: number, @Body() data: profileUpdateDTO){
-       return this.userService.updateUserProfile(userId,data,file);
+    updateUserProfilePicture(@UploadedFile() file: Express.Multer.File, @GetUser() userId: number){
+
+       if(!file)
+          throw new HttpException({success: false, message: 'File not provided....'},HttpStatus.BAD_REQUEST);
+
+       return this.userService.updateUserProfilePicture(userId,file);
     }
+
     
     @Delete('profile/delete')
     deleteProfile(@GetUser() userId: number){
