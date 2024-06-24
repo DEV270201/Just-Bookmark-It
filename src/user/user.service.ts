@@ -122,27 +122,27 @@ export class UserService {
         //2. delete the profile picture from the s3 bucket
         //3. delete the user itself
 
-        const deleteBookmarks = this.prisma.bookmarks.deleteMany({
-          where: {
-            userId
-          }
-        });
+        await this.prisma.$transaction(async (transaction)=> {
 
-        const deleteProfile = this.s3Service.send(
-          new DeleteObjectCommand({
-            Bucket: this.config.getOrThrow('AWS_S3_BUCKET'),
-            Key: String(userId) + '.png'
-          })
-        )
+          await transaction.bookmarks.deleteMany({
+            where: {
+              userId
+            }
+          });
 
-        const deleteUser = this.prisma.users.delete({
-          where: {
-            id: userId
-          }
+          await this.s3Service.send(
+            new DeleteObjectCommand({
+              Bucket: this.config.getOrThrow('AWS_S3_BUCKET'),
+              Key: String(userId) + '.png'
+            })
+          );
+
+          await transaction.users.delete({
+                    where: {
+                      id: userId
+                    }
+                  });
         });
-        
-        // error pls fix it 
-        await this.prisma.$transaction([deleteBookmarks,deleteProfile,deleteUser]);
 
         return {
           success: true
