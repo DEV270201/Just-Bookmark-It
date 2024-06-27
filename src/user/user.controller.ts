@@ -4,7 +4,6 @@ import { JWTGuard } from 'src/auth/guards';
 import { GetUser } from './../auth/decorators';
 import { profileUpdateDTO } from './dtos/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import storageInfo from 'src/utils/multerStorage';
 
 
 @Controller('users')

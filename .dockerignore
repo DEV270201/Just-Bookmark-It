@@ -1,0 +1,8 @@
+# this is my dockerignore file which will ignore unnecessary files for building the image
+node_modules
+dist
+.gitignore
+docker-compose.yml
+Dockerfile
+*.md
+thingstodo.txt
