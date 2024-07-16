@@ -30,10 +30,10 @@ jobs:
          cat .env
          
     - name: Checkout code
-      uses: actions/checkout@4
+      uses: actions/checkout@v4
       
     - name: Setup Nodejs
-      uses: actions/setup-node@4
+      uses: actions/setup-node@v4
       with:
         node-version: 18.20.0
     - run: npm ci
