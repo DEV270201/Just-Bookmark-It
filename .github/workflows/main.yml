@@ -65,6 +65,7 @@ jobs:
         IMAGE_TAG: latest
       run: |
         echo "Building docker image......"
+        docker build --dry-run .
         docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "Pushing docker image to AWS ECR......"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
