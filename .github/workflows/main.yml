@@ -31,6 +31,11 @@ jobs:
          cat .env
          cat myfile.txt
          
+    - name: checking file creation
+      run: |
+          ls -la
+          cat .env
+         
     - name: Checkout code
       uses: actions/checkout@v4
       
