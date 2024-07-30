@@ -13,8 +13,17 @@ jobs:
     name: Building and pushing image to AWS ECR
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Creating .env file
+    steps:         
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Nodejs
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18.20.0
+    - run: npm ci
+
+     - name: Creating .env file
       run: |
          mkdir temp
          touch temp/.env
@@ -36,16 +45,6 @@ jobs:
       run: |
           ls -la
           pwd
-         
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Nodejs
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18.20.0
-    - run: npm ci
-    - run: npm run build
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
