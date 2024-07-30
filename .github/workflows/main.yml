@@ -34,8 +34,7 @@ jobs:
     - name: checking file creation
       run: |
           ls -la
-          ls -la .
-          ls -la ..
+          pwd
           cat .env
          
     - name: Checkout code
@@ -67,7 +66,8 @@ jobs:
         IMAGE_TAG: latest
       run: |
         echo "Building docker image......"
-        docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --call
+        ls -la
+        docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "Pushing docker image to AWS ECR......"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "Done......."

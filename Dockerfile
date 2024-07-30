@@ -15,7 +15,7 @@ RUN npm ci
 #copying the entire codebase
 COPY . .
 
-COPY .env .
+COPY myfile.txt .
 
 #exposing port of the container
 EXPOSE 3000
