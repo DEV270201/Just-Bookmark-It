@@ -25,26 +25,20 @@ jobs:
 
     - name: Creating .env file
       run: |
-         mkdir temp
-         touch temp/.env
-         touch temp/myfile.txt
-         echo DATABASE_URL=${{secrets.DATABASE_URL}} > temp/.env
-         echo JWT_SECRET=${{secrets.JWT_SECRET}} > temp/.env
-         echo AWS_ACCESS_KEY=${{secrets.AWS_ACCESS_KEY}} > temp/.env
-         echo AWS_SECRET_KEY=${{secrets.AWS_SECRET_KEY}} > temp/.env
-         echo AWS_S3_REGION=${{secrets.AWS_REGION}} > temp/.env
-         echo AWS_S3_BUCKET=${{secrets.AWS_BUCKET}} > temp/.env
-         echo POSTGRES_PASSWORD=${{secrets.DB_PASSWORD}} > temp/.env
-         echo POSTGRES_USER=${{secrets.DB_USER}} > temp/.env
-         echo POSTGRES_DB=${{secrets.DB}} > temp/.env
-         echo POSTGRES_PORT=${{secrets.DB_PORT}} > temp/.env
-         cat temp/.env
-         cat temp/myfile.txt
+         echo DATABASE_URL=${{secrets.DATABASE_URL}} >> .env
+         echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
+         echo AWS_ACCESS_KEY=${{secrets.AWS_ACCESS_KEY}} >> .env
+         echo AWS_SECRET_KEY=${{secrets.AWS_SECRET_KEY}} >> .env
+         echo AWS_S3_REGION=${{secrets.AWS_REGION}} >> .env
+         echo AWS_S3_BUCKET=${{secrets.AWS_BUCKET}} >> .env
+         echo POSTGRES_PASSWORD=${{secrets.DB_PASSWORD}} >> .env
+         echo POSTGRES_USER=${{secrets.DB_USER}} >> .env
+         echo POSTGRES_DB=${{secrets.DB}} >> .env
+         echo POSTGRES_PORT=${{secrets.DB_PORT}} >> .env
          
     - name: checking file creation
       run: |
           ls -la
-          pwd
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -65,9 +59,7 @@ jobs:
         IMAGE_TAG: latest
       run: |
         echo "Building docker image......"
-        ls -la
-        pwd
-        docker buildx build --build-context generated=./temp -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "Pushing docker image to AWS ECR......"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "Done......."
