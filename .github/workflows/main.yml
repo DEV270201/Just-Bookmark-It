@@ -36,7 +36,6 @@ jobs:
       run: |
           ls -la
           pwd
-          cat .env
          
     - name: Checkout code
       uses: actions/checkout@v4
