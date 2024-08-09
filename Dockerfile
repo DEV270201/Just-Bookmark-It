@@ -15,6 +15,9 @@ RUN npm ci
 #copying the entire codebase
 COPY . .
 
+#running migrations
+RUN npx prisma migrate deploy && npx prisma generate
+
 #exposing port of the container
 EXPOSE 3000
 

@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { NestFactory } from '@nestjs/core';
+import { NestFactory,HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
-import { PrismaClientInitializationError } from '@prisma/client/runtime/library';
+import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
 
 async function bootstrap() {
   try{
@@ -20,13 +20,16 @@ async function bootstrap() {
       },
       whitelist: true //removes properties from the request body that are not mentioned in the DTO
     })); //telling NestJS to use the validation pipe globally
+
+    
+    const {httpAdapter} = app.get(HttpAdapterHost);
+    app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+
     await app.listen(3000);
     console.log("Listening on port 3000");
   }catch(err){
     console.log('Error : ',err);
-    if(err instanceof PrismaClientInitializationError){
-      console.log(err.message);
-    }
+    return;
   }
 }
 bootstrap();
