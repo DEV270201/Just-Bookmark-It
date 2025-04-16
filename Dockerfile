@@ -7,19 +7,22 @@ FROM node:18.20-bullseye-slim
 WORKDIR /home/app
 
 #copying application dependencies files to the container
-COPY package*.json .
+COPY ./app/package*.json .
 
 #installing all the required dependencies
 RUN npm ci
 
 #copying the entire codebase
-COPY . .
+COPY ./app .
 
 #running migrations
-RUN npx prisma migrate deploy && npx prisma generate
+RUN npx prisma generate
+
+#Building build
+RUN npm run build
 
 #exposing port of the container
 EXPOSE 3000
 
 #running command for starting the application
-CMD [ "npm" , "run" , "start:dev" ]
+CMD ["/bin/sh", "-c", "npx prisma migrate deploy && npm run start:prod"]

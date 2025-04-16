@@ -2,20 +2,20 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileUpdateDTO } from './dtos/user.dto';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+// import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-  private readonly s3Service: S3Client;
+  // private readonly s3Service: S3Client;
   constructor(private prisma: PrismaService,private config:ConfigService) {
-    this.s3Service = new S3Client({
-      region: this.config.getOrThrow('AWS_S3_REGION'),
-      credentials: {
-        accessKeyId: this.config.getOrThrow('AWS_ACCESS_KEY'),
-        secretAccessKey: this.config.getOrThrow('AWS_SECRET_KEY')
-      }
-    })
+    // this.s3Service = new S3Client({
+    //   region: this.config.getOrThrow('AWS_S3_REGION'),
+    //   credentials: {
+    //     accessKeyId: this.config.getOrThrow('AWS_ACCESS_KEY'),
+    //     secretAccessKey: this.config.getOrThrow('AWS_SECRET_KEY')
+    //   }
+    // })
   }
 
   async getUserProfile(id: number) {
@@ -78,36 +78,36 @@ export class UserService {
       try{
         //1. upload the picture to s3 
 
-        let split = file.originalname.split('.');
-        let Key = String(id) + '.' + split[split.length-1];
-        let Bucket = this.config.getOrThrow('AWS_S3_BUCKET');
-        let Region = this.config.getOrThrow('AWS_S3_REGION');
+        // let split = file.originalname.split('.');
+        // let Key = String(id) + '.' + split[split.length-1];
+        // let Bucket = this.config.getOrThrow('AWS_S3_BUCKET');
+        // let Region = this.config.getOrThrow('AWS_S3_REGION');
         
         
-        const data = await this.s3Service.send(
-          new PutObjectCommand({
-            Body: file.buffer,
-            Bucket,
-            Key
-          })
-        )
+        // const data = await this.s3Service.send(
+        //   new PutObjectCommand({
+        //     Body: file.buffer,
+        //     Bucket,
+        //     Key
+        //   })
+        // )
 
-        console.log("data received from s3 : ",data);
+        // console.log("data received from s3 : ",data);
 
-        //2. update the db
-        let link = `https://${Bucket}.s3.${Region}.amazonaws.com/${Key}`
-        await this.prisma.users.update({
-          where: {
-            id
-          },
-          data: {
-              photo: link
-            }
-        });
+        // //2. update the db
+        // let link = `https://${Bucket}.s3.${Region}.amazonaws.com/${Key}`
+        // await this.prisma.users.update({
+        //   where: {
+        //     id
+        //   },
+        //   data: {
+        //       photo: link
+        //     }
+        // });
         
         return {
           success: true,
-          link
+          // link
         }
 
       }catch(err){
@@ -130,12 +130,12 @@ export class UserService {
             }
           });
 
-          await this.s3Service.send(
-            new DeleteObjectCommand({
-              Bucket: this.config.getOrThrow('AWS_S3_BUCKET'),
-              Key: String(userId) + '.png'
-            })
-          );
+          // await this.s3Service.send(
+          //   new DeleteObjectCommand({
+          //     Bucket: this.config.getOrThrow('AWS_S3_BUCKET'),
+          //     Key: String(userId) + '.png'
+          //   })
+          // );
 
           await transaction.users.delete({
                     where: {
