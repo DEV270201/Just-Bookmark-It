@@ -1,7 +1,6 @@
 #Building docker image for my application
-
 #basing my application on node image
-FROM node:18.20-bullseye-slim
+FROM node:20-alpine AS devImage
 
 #setting the working directory in the container
 WORKDIR /home/app
@@ -20,6 +19,25 @@ RUN npx prisma generate
 
 #Building build
 RUN npm run build
+
+#COPY production related changes
+FROM node:20-alpine AS prodImage
+
+WORKDIR /home/app
+
+COPY --from=devImage /home/app/dist ./dist
+
+COPY --from=devImage /home/app/package*.json ./
+
+COPY --from=devImage /home/app/prisma/schema.prisma ./prisma/
+
+RUN npm ci --omit=dev
+
+# install openssl
+# by default apline don't have openssl and prisma needs it to function properly
+RUN apk update && apk upgrade 
+
+RUN apk add --no-cache openssl
 
 #exposing port of the container
 EXPOSE 3000
